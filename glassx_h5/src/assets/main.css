@@ -1,0 +1,62 @@
+@import './base.css';
+
+/* H5 移动端优化样式 */
+#app {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+  /* 防止横向滚动 */
+  overflow-x: hidden;
+}
+
+a,
+.green {
+  text-decoration: none;
+  color: hsla(160, 100%, 37%, 1);
+  transition: 0.4s;
+  padding: 3px;
+}
+
+/* 移动端触摸优化 */
+@media (hover: hover) {
+  a:hover {
+    background-color: hsla(160, 100%, 37%, 0.2);
+  }
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  #app {
+    padding: 0;
+  }
+  
+  /* 移动端字体大小调整 */
+  body {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}
+
+/* 平板和桌面端样式 */
+@media (min-width: 1024px) {
+  #app {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  body {
+    font-size: 16px;
+  }
+}
+
+/* 安全区域适配 */
+@supports (padding: max(0px)) {
+  #app {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+}
