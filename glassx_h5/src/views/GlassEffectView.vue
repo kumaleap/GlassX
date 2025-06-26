@@ -62,8 +62,12 @@ const startDrag = (event: MouseEvent | TouchEvent) => {
 const onDrag = (event: MouseEvent | TouchEvent) => {
   if (!isDragging.value) return
   
-  // 防止页面滚动
-  event.preventDefault()
+  // 检查是否在滑块区域内拖拽，如果是则不阻止默认行为
+  const target = event.target as HTMLElement
+  if (!target.closest('.slider-container')) {
+    // 只有在非滑块区域才防止页面滚动
+    event.preventDefault()
+  }
   
   const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX
   const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY
@@ -140,27 +144,15 @@ onUnmounted(() => {
             <span class="control-label">Blur value</span>
             <span class="control-value">{{ blurValue }}</span>
           </div>
-          <div class="slider-container">
-            <div class="enhanced-slider">
-              <div class="slider-track">
-                <div 
-                  class="slider-progress" 
-                  :style="{ width: `${(blurValue / 50) * 100}%` }"
-                ></div>
-              </div>
-              <input
-                v-model.number="blurValue"
-                type="range"
-                min="0"
-                max="50"
-                step="1"
-                class="slider-input"
-              />
-              <div 
-                class="slider-thumb" 
-                :style="{ left: `calc(${(blurValue / 50) * 100}% - 10px)` }"
-              ></div>
-            </div>
+          <div class="slider-container" @mousedown.stop @touchstart.stop>
+            <input
+              v-model.number="blurValue"
+              type="range"
+              min="0"
+              max="50"
+              step="1"
+              class="native-slider"
+            />
           </div>
         </div>
 
@@ -170,27 +162,15 @@ onUnmounted(() => {
             <span class="control-label">Refraction 折射</span>
             <span class="control-value">{{ refraction.toFixed(2) }}</span>
           </div>
-          <div class="slider-container">
-            <div class="enhanced-slider">
-              <div class="slider-track">
-                <div 
-                  class="slider-progress" 
-                  :style="{ width: `${((refraction - 0.1) / 0.15) * 100}%` }"
-                ></div>
-              </div>
-              <input
-                v-model.number="refraction"
-                type="range"
-                min="0.1"
-                max="0.25"
-                step="0.01"
-                class="slider-input"
-              />
-              <div 
-                class="slider-thumb" 
-                :style="{ left: `calc(${((refraction - 0.1) / 0.15) * 100}% - 10px)` }"
-              ></div>
-            </div>
+          <div class="slider-container" @mousedown.stop @touchstart.stop>
+            <input
+              v-model.number="refraction"
+              type="range"
+              min="0.1"
+              max="0.25"
+              step="0.01"
+              class="native-slider"
+            />
           </div>
         </div>
 
@@ -200,27 +180,15 @@ onUnmounted(() => {
             <span class="control-label">Depth 深度</span>
             <span class="control-value">{{ depth }}</span>
           </div>
-          <div class="slider-container">
-            <div class="enhanced-slider">
-              <div class="slider-track">
-                <div 
-                  class="slider-progress" 
-                  :style="{ width: `${((depth - 4) / 12) * 100}%` }"
-                ></div>
-              </div>
-              <input
-                v-model.number="depth"
-                type="range"
-                min="4"
-                max="16"
-                step="1"
-                class="slider-input"
-              />
-              <div 
-                class="slider-thumb" 
-                :style="{ left: `calc(${((depth - 4) / 12) * 100}% - 10px)` }"
-              ></div>
-            </div>
+          <div class="slider-container" @mousedown.stop @touchstart.stop>
+            <input
+              v-model.number="depth"
+              type="range"
+              min="4"
+              max="16"
+              step="1"
+              class="native-slider"
+            />
           </div>
         </div>
       </div>
@@ -414,94 +382,71 @@ onUnmounted(() => {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-/* 增强的滑动条 */
+/* 原生滑块样式 */
 .slider-container {
   position: relative;
   padding: 8px 0;
+  touch-action: auto;
 }
 
-.enhanced-slider {
-  position: relative;
+.native-slider {
   width: 100%;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  z-index: 1;
-}
-
-.slider-track {
-  position: relative;
-  width: 100%;
-  height: 6px;
+  height: 8px;
+  border-radius: 4px;
   background: rgba(255, 255, 255, 0.15);
-  border-radius: 3px;
-  overflow: hidden;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  pointer-events: none;
-}
-
-.slider-progress {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.6));
-  border-radius: 3px;
-  transition: width 0.2s ease;
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
-  pointer-events: none;
-}
-
-.slider-input {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
+  outline: none;
+  border: none;
   cursor: pointer;
   appearance: none;
-  margin: 0;
-  padding: 0;
-  outline: none;
-  border: none;
-  z-index: 3;
+  -webkit-appearance: none;
 }
 
-.slider-input:focus {
-  outline: none;
+/* Webkit浏览器样式 */
+.native-slider::-webkit-slider-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-.slider-input::-webkit-slider-thumb {
+.native-slider::-webkit-slider-thumb {
   appearance: none;
-  outline: none;
-}
-
-.slider-input::-moz-range-thumb {
-  border: none;
-  outline: none;
-}
-
-.slider-thumb {
-  position: absolute;
-  top: 50%;
-  width: 20px;
   height: 20px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+  width: 20px;
   border-radius: 50%;
-  transform: translateY(-50%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+  border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 
     0 2px 8px rgba(0, 0, 0, 0.15),
     0 0 0 2px rgba(255, 255, 255, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: none;
-  pointer-events: none;
-  z-index: 2;
+  cursor: pointer;
 }
 
-/* 移除滑块的hover和active效果 */
+/* Firefox浏览器样式 */
+.native-slider::-moz-range-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.native-slider::-moz-range-thumb {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    0 0 0 2px rgba(255, 255, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+}
 
 /* 移动端适配 */
 @media (max-width: 768px) {
