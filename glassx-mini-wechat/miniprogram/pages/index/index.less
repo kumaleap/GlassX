@@ -1,61 +1,163 @@
 /**index.less**/
 page {
   height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-.scrollarea {
-  flex: 1;
-  overflow-y: hidden;
-}
-
-.userinfo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: #aaa;
-  width: 80%;
-}
-
-.userinfo-avatar {
   overflow: hidden;
-  width: 128rpx;
-  height: 128rpx;
-  margin: 20rpx;
-  border-radius: 50%;
 }
 
-.usermotto {
-  margin-top: 200px;
-}
-.avatar-wrapper {
-  padding: 0;
-  width: 56px !important;
-  border-radius: 8px;
-  margin-top: 40px;
-  margin-bottom: 40px;
-}
-
-.avatar {
-  display: block;
-  width: 56px;
-  height: 56px;
+/* 玻璃效果页面 */
+.glass-effect-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.nickname-wrapper {
-  display: flex;
+/* 背景层 */
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  padding: 16px;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.9;
+}
+
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+  background-size: 300rpx 300rpx, 200rpx 200rpx;
+}
+
+/* 可移动区域 */
+.movable-area {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* 玻璃面板 */
+.glass-panel {
+  width: 640rpx;
+  height: 840rpx;
+  border-radius: 40rpx;
+  padding: 48rpx;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(21px);
+  -webkit-backdrop-filter: blur(21px);
   box-sizing: border-box;
-  border-top: .5px solid rgba(0, 0, 0, 0.1);
-  border-bottom: .5px solid rgba(0, 0, 0, 0.1);
-  color: black;
 }
 
-.nickname-label {
-  width: 105px;
+/* 高光效果 */
+.glass-highlight-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.8),
+    transparent
+  );
+  z-index: 1;
 }
 
-.nickname-input {
-  flex: 1;
+/* 拖拽手柄 */
+.drag-handle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32rpx;
+  z-index: 2;
 }
+
+.handle-indicator {
+  width: 80rpx;
+  height: 8rpx;
+  border-radius: 4rpx;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+/* 面板头部 */
+.panel-header {
+  margin-bottom: 48rpx;
+  z-index: 2;
+}
+
+.panel-title {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
+}
+
+/* 控制项 */
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 48rpx;
+  z-index: 2;
+}
+
+.control-item {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.control-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.control-label {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: white;
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.2);
+}
+
+.control-value {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.2);
+  min-width: 100rpx;
+  text-align: right;
+}
+
+/* 滑块容器 */
+.slider-container {
+  padding: 16rpx 0;
+  margin: 0 -20rpx; /* 向左右扩展，保证slider完全对齐 */
+}
+
+.slider {
+  width: 100%;
+  transform: scale(1);
+  margin: 0;
+  padding: 0;
+}
+
+

@@ -1,28 +1,99 @@
 <!--index.wxml-->
-<navigation-bar title="Weixin" back="{{false}}" color="black" background="#FFF"></navigation-bar>
-<scroll-view class="scrollarea" scroll-y type="list">
-  <view class="container">
-    <view class="userinfo">
-      <block wx:if="{{canIUseNicknameComp && !hasUserInfo}}">
-        <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-          <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
-        </button>
-        <view class="nickname-wrapper">
-          <text class="nickname-label">昵称</text>
-          <input type="nickname" class="nickname-input" placeholder="请输入昵称" bind:change="onInputChange" />
-        </view>
-      </block>
-      <block wx:elif="{{!hasUserInfo}}">
-        <button wx:if="{{canIUseGetUserProfile}}" bindtap="getUserProfile"> 获取头像昵称 </button>
-        <view wx:else> 请使用2.10.4及以上版本基础库 </view>
-      </block>
-      <block wx:else>
-        <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-        <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-      </block>
-    </view>
-    <view class="usermotto">
-      <text class="user-motto">{{motto}}</text>
-    </view>
+
+<view class="glass-effect-page">
+  <!-- 背景层 -->
+  <view class="background">
+    <image class="background-image" src="/images/bg.png" mode="aspectFill"></image>
+    <view class="background-overlay"></view>
   </view>
-</scroll-view>
+
+  <!-- 可拖拽的毛玻璃设置面板 -->
+  <movable-area class="movable-area">
+    <movable-view 
+      class="glass-panel" 
+      direction="all" 
+      x="{{panelX}}" 
+      y="{{panelY}}"
+      style="background: rgba(255, 255, 255, {{refraction}}); backdrop-filter: blur({{blurValue}}px); box-shadow: {{shadowStyle}}; border: 1px solid rgba(255, 255, 255, {{borderOpacity}});"
+    >
+      <!-- 高光效果 -->
+      <view class="glass-highlight-top"></view>
+      
+      <!-- 拖拽手柄 -->
+      <view class="drag-handle">
+        <view class="handle-indicator"></view>
+      </view>
+
+      <!-- 设置标题 -->
+      <view class="panel-header">
+        <text class="panel-title">Settings</text>
+      </view>
+
+      <!-- 控制项 -->
+      <view class="controls">
+        <!-- Blur value -->
+        <view class="control-item">
+          <view class="control-header">
+            <text class="control-label">Blur value</text>
+            <text class="control-value">{{blurValue}}</text>
+          </view>
+          <view class="slider-container">
+            <slider 
+              class="slider"
+              min="0" 
+              max="50" 
+              step="1" 
+              value="{{blurValue}}" 
+              bindchange="onBlurChange"
+              block-size="20"
+              selected-color="#ffffff"
+              backgroundColor="rgba(255, 255, 255, 0.15)"
+            />
+          </view>
+        </view>
+
+        <!-- Refraction -->
+        <view class="control-item">
+          <view class="control-header">
+            <text class="control-label">Refraction 折射</text>
+            <text class="control-value">{{refractionDisplay}}</text>
+          </view>
+          <view class="slider-container">
+            <slider 
+              class="slider"
+              min="10" 
+              max="25" 
+              step="1" 
+              value="{{refractionSlider}}" 
+              bindchange="onRefractionChange"
+              block-size="20"
+              selected-color="#ffffff"
+              backgroundColor="rgba(255, 255, 255, 0.15)"
+            />
+          </view>
+        </view>
+
+        <!-- Depth -->
+        <view class="control-item">
+          <view class="control-header">
+            <text class="control-label">Depth 深度</text>
+            <text class="control-value">{{depth}}</text>
+          </view>
+          <view class="slider-container">
+            <slider 
+              class="slider"
+              min="4" 
+              max="16" 
+              step="1" 
+              value="{{depth}}" 
+              bindchange="onDepthChange"
+              block-size="20"
+              selected-color="#ffffff"
+              backgroundColor="rgba(255, 255, 255, 0.15)"
+            />
+          </view>
+        </view>
+      </view>
+    </movable-view>
+  </movable-area>
+</view>

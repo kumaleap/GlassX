@@ -1,53 +1,83 @@
 // index.ts
 // 获取应用实例
 const app = getApp<IAppOption>()
-const defaultAvatarUrl = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'
 
 Component({
   data: {
-    motto: 'Hello World',
-    userInfo: {
-      avatarUrl: defaultAvatarUrl,
-      nickName: '',
-    },
-    hasUserInfo: false,
-    canIUseGetUserProfile: wx.canIUse('getUserProfile'),
-    canIUseNicknameComp: wx.canIUse('input.type.nickname'),
+    // 毛玻璃效果参数
+    blurValue: 21,
+    refraction: 0.15,
+    depth: 8,
+    
+    // 面板位置
+    panelX: 20,
+    panelY: 150,
+    
+    // 计算属性
+    refractionDisplay: '0.15',
+    refractionSlider: 15, // 0.15 * 100 = 15
+    shadowStyle: '0 16px 32px rgba(0, 0, 0, 0.15), 0 8px 16px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08)',
+    borderOpacity: 0.35, // 基于深度的边框透明度
   },
+
+  lifetimes: {
+    attached() {
+      // 初始化面板位置
+      const systemInfo = wx.getSystemInfoSync()
+      const centerX = Math.max(0, (systemInfo.windowWidth - 320) / 2)
+      const centerY = Math.max(0, (systemInfo.windowHeight - 500) / 2)
+      
+      // 初始化阴影样式和边框透明度
+      const initialShadowStyle = this.calculateShadowStyle(this.data.depth)
+      const initialBorderOpacity = 0.25 + (this.data.depth - 4) / (16 - 4) * 0.25
+      
+      this.setData({
+        panelX: centerX,
+        panelY: centerY,
+        shadowStyle: initialShadowStyle,
+        borderOpacity: initialBorderOpacity
+      })
+    }
+  },
+
   methods: {
-    // 事件处理函数
-    bindViewTap() {
-      wx.navigateTo({
-        url: '../logs/logs',
-      })
+    // 计算阴影样式
+    calculateShadowStyle(depth: number) {
+      const mainShadow = `0 ${depth * 3}px ${depth * 6}px rgba(0, 0, 0, ${0.12 + depth * 0.008})`
+      const mediumShadow = `0 ${depth * 2}px ${depth * 4}px rgba(0, 0, 0, ${0.08 + depth * 0.006})`
+      const smallShadow = `0 ${depth}px ${depth * 2}px rgba(0, 0, 0, ${0.04 + depth * 0.004})`
+      return `${mainShadow}, ${mediumShadow}, ${smallShadow}`
     },
-    onChooseAvatar(e: any) {
-      const { avatarUrl } = e.detail
-      const { nickName } = this.data.userInfo
+
+    // Blur value 滑块变化
+    onBlurChange(e: any) {
+      const value = e.detail.value
       this.setData({
-        "userInfo.avatarUrl": avatarUrl,
-        hasUserInfo: nickName && avatarUrl && avatarUrl !== defaultAvatarUrl,
+        blurValue: value
       })
     },
-    onInputChange(e: any) {
-      const nickName = e.detail.value
-      const { avatarUrl } = this.data.userInfo
+
+    // Refraction 滑块变化（处理小数）
+    onRefractionChange(e: any) {
+      const sliderValue = e.detail.value
+      const actualValue = sliderValue / 100  // 将 10-25 映射到 0.1-0.25
       this.setData({
-        "userInfo.nickName": nickName,
-        hasUserInfo: nickName && avatarUrl && avatarUrl !== defaultAvatarUrl,
+        refractionSlider: sliderValue,
+        refraction: actualValue,
+        refractionDisplay: actualValue.toFixed(2)
       })
     },
-    getUserProfile() {
-      // 推荐使用wx.getUserProfile获取用户信息，开发者每次通过该接口获取用户个人信息均需用户确认，开发者妥善保管用户快速填写的头像昵称，避免重复弹窗
-      wx.getUserProfile({
-        desc: '展示用户信息', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
-        success: (res) => {
-          console.log(res)
-          this.setData({
-            userInfo: res.userInfo,
-            hasUserInfo: true
-          })
-        }
+
+    // Depth 滑块变化
+    onDepthChange(e: any) {
+      const value = e.detail.value
+      const shadowStyle = this.calculateShadowStyle(value)
+      // 深度越大，边框越亮，范围从0.25到0.5
+      const borderOpacity = 0.25 + (value - 4) / (16 - 4) * 0.25
+      this.setData({
+        depth: value,
+        shadowStyle: shadowStyle,
+        borderOpacity: borderOpacity
       })
     },
   },
